@@ -44,9 +44,6 @@ const Home = () => {
                 <CardContent className="space-y-2">
                   <FlowWrapper />
                 </CardContent>
-                <CardFooter>
-                  <Button>Generate Text</Button>
-                </CardFooter>
               </Card>
             </TabsContent>
             <TabsContent value="ai-chat">
