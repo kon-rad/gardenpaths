@@ -33,7 +33,7 @@ const Home = () => {
         </div>
         <div className="w-1/2 h-full m-2">
           <Tabs defaultValue="account" className="w-full h-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="garden">Garden</TabsTrigger>
               <TabsTrigger value="context">Context</TabsTrigger>
             </TabsList>

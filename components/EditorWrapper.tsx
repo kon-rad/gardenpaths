@@ -3,7 +3,6 @@
 import { Editor } from "novel";
 import { useEffect } from "react";
 import { useGlobalState } from "@/lib/contexts/GlobalState";
-import axios from "axios";
 
 const EditorWrapper = () => {
   const {
