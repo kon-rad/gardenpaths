@@ -24,15 +24,11 @@ export async function POST(req: Request): Promise<Response> {
 
   console.log("inside api content, context, style: ", content, context, style);
 
-  const MODEL = USE_GPT4_TURBO
-    ? "gpt-4-1106-preview"
-    : DEV_MODE
-    ? "gpt-3.5-turbo"
-    : "gpt-4";
+  const MODEL = "gpt-3.5-turbo-1106";
 
   const llmWriter = new OpenAI({
     modelName: MODEL,
-    temperature: 0.2,
+    temperature: 0.7,
     openAIApiKey: process.env.OPENAI_API_KEY,
     maxTokens: -1,
   });
@@ -40,10 +36,10 @@ export async function POST(req: Request): Promise<Response> {
   const postGenPrompt =
     `You are an expert writing assistant that continues existing text based on context from prior text. ` +
     `Give more weight/priority to the later characters than the beginning ones. ` +
-    `Limit your response to no more than 200 characters, but make sure to construct complete sentences.` +
-    `${content ? `Complete this content: ${content}` : ""}` +
+    `Limit your response to only one complete sentence.` +
     `${style ? `Follow this style instructions: ${style}` : ""}` +
-    `${context ? `Write the new sentence in this context: ${context}` : ""}`;
+    `${context ? `Write the new sentence in this context: ${context}` : ""}` +
+    `${content ? `Complete the last sentence: ${content}` : ""}`;
 
   console.log("postGenPrompt: ", postGenPrompt);
 
