@@ -53,9 +53,9 @@ const FlowWrapper = () => {
     []
   );
 
-  const cmdAndUPressed = useKeyPress(['Meta+u', 'Strg+u']);
-  const cmdAndJPressed = useKeyPress(['Meta+j', 'Strg+j']);
-  const cmdAndKPressed = useKeyPress(['Meta+k', 'Strg+k']);
+  const cmdAndUPressed = useKeyPress(["Meta+u", "Strg+u"]);
+  const cmdAndJPressed = useKeyPress(["Meta+j", "Strg+j"]);
+  const cmdAndKPressed = useKeyPress(["Meta+k", "Strg+k"]);
 
   React.useEffect(() => {
     if (cmdAndUPressed) {
@@ -81,9 +81,9 @@ const FlowWrapper = () => {
     }
   }, [paths]);
 
-  const cmdAndUPressed = useKeyPress(["Meta+u", "Strg+u"]);
-  const cmdAndJPressed = useKeyPress(["Meta+j", "Strg+j"]);
-  const cmdAndKPressed = useKeyPress(["Meta+k", "Strg+k"]);
+  // const cmdAndUPressed = useKeyPress(["Meta+u", "Strg+u"]);
+  // const cmdAndJPressed = useKeyPress(["Meta+j", "Strg+j"]);
+  // const cmdAndKPressed = useKeyPress(["Meta+k", "Strg+k"]);
 
   // we are using a bit of a shortcut here to adjust the edge type
   // this could also be done with a custom edge for example
@@ -194,9 +194,12 @@ const FlowWrapper = () => {
       <ReactFlowProvider initialNodes={nodes} initialEdges={edges}>
         <ReactFlow
           // nodes={nodes}
-          nodes={nodes.map(node => ({
+          nodes={nodes.map((node) => ({
             ...node,
-            style: node.id === selectedNode ? { ...node.style, background: 'green' } : node.style,
+            style:
+              node.id === selectedNode
+                ? { ...node.style, background: "green" }
+                : node.style,
           }))}
           edges={edgesWithUpdatedTypes}
           onNodeClick={onNodeClick}
