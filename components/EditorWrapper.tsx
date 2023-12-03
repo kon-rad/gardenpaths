@@ -64,6 +64,8 @@ const EditorWrapper = () => {
 
           return;
         }
+        // call the /api/autocomplete
+        // { content: '' }
         startTransitionSaving(async () => {
           console.log("starting save inside EditorWrapper: doc: ", doc);
 
