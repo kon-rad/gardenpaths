@@ -21,6 +21,10 @@ export default function App({
   nodes: Node[];
   edges: Edge[];
 }) {
+  const fixedX = 200;
+
+  const [latestY, setLatestY] = useState(0);
+
   const [nodes, setNodes] = useState<Node[]>(initNodes);
   const [edges, setEdges] = useState<Edge[]>(initEdges);
 
@@ -53,6 +57,36 @@ export default function App({
     setNodes([...nodes, newNode]);
   };
 
+    // const addTriNode = () => {
+    //     for (let i = 0; i < 3; i++) {
+    //         const y = latestY + 100;
+    //         const newNode = {
+    //             id: (nodes.length + i + 1).toString(),
+    //             data: { label: `Node ${nodes.length + i + 1}` },
+    //             position: { x: (nodes.length + i) * 100, y },
+    //             // Add any other properties you need for the node
+    //         };
+    //         setNodes((prevNodes) => [...prevNodes, newNode]);
+    //     setLatestY(y);
+    //     }
+    // };
+    const addTriNode = () => {
+        const xOffset = 100; // Define an offset for the X coordinate
+
+        for (let i = 0; i < 3; i++) {
+          const y = latestY + 100;
+          const x = fixedX + i * xOffset; // Add an offset to the X coordinate based on the index
+          const newNode = {
+            id: (nodes.length + i + 1).toString(),
+            data: { label: `Node ${nodes.length + i + 1}` },
+            position: { x, y },
+            // Add any other properties you need for the node
+          };
+          setNodes((prevNodes) => [...prevNodes, newNode]);
+          setLatestY(y); // Update the latest Y coordinate
+        }
+      };
+
   return (
     <div style={{ width: '500px', height: '500px', border: 'solid 1px black' }}>
       <ReactFlow
@@ -62,7 +96,7 @@ export default function App({
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
       />
-      <button onClick={addNode}>Add Node</button>
+      <button onClick={addTriNode}>Add Tri Node</button>
     </div>
   );
 }
