@@ -35,6 +35,7 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = ({
     `${Math.random() * 10000000}`
   );
   const [doc, setDoc] = useState<any>({});
+  const [paths, setPaths] = useState<any>([]);
   const [style, setStyle] = useState<string>("");
   const [context, setContext] = useState<string>("");
   let [isPendingSaving, startTransitionSaving] = useTransition();
@@ -42,14 +43,38 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = ({
 
   const callAutocomplete = async () => {
     console.log("callAutocomplete called");
+    try {
+      console.log("callAutocomplete called");
 
-    const resp = await axios.post("/api/autocomplete", {
-      context,
-      style,
-      content: doc,
-    });
-    console.log("resp: ", resp);
+      const autocompleteCalls = [
+        axios.post("/api/autocomplete", {
+          context,
+          style,
+          content: doc?.content,
+        }),
+        axios.post("/api/autocomplete", {
+          context,
+          style,
+          content: doc?.content,
+        }),
+        axios.post("/api/autocomplete", {
+          context,
+          style,
+          content: doc?.content,
+        }),
+      ];
+
+      const responses = await Promise.all(autocompleteCalls);
+      const newResults = responses.map((response) => response.data.result);
+
+      setPaths((prevPaths) => [...prevPaths, newResults]);
+      console.log("newResults: ", newResults);
+    } catch (error) {
+      console.error("Error in callAutocomplete:", error);
+    }
   };
+  console.log("new paths: ", paths);
+
   return (
     <GlobalContext.Provider
       value={
@@ -66,6 +91,8 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = ({
           style,
           setStyle,
           callAutocomplete,
+          paths,
+          setPaths,
         } as any
       }
     >
