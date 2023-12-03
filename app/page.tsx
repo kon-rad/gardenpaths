@@ -26,11 +26,11 @@ const Home = () => {
         </p>
       </div>
       <div className="flex justify-center items-center mb-20 w-full  max-w-screen-xl">
-        <div className="w-1/2 h-full m-4">
+        <div className="w-1/2 h-full m-2">
           <EditorMenu />
           <EditorWrapper />
         </div>
-        <div className="w-1/2 h-full m-4">
+        <div className="w-1/2 h-full m-2">
           <Tabs defaultValue="account" className="w-full h-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="garden">Garden</TabsTrigger>
@@ -44,9 +44,6 @@ const Home = () => {
                 <CardContent className="space-y-2">
                   <FlowWrapper />
                 </CardContent>
-                <CardFooter>
-                  <Button>Generate Text</Button>
-                </CardFooter>
               </Card>
             </TabsContent>
             <TabsContent value="ai-chat">

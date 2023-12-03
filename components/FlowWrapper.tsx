@@ -15,6 +15,7 @@ import {
   edges as initialEdges,
 } from "./initial-elements";
 import "reactflow/dist/style.css";
+import { Button } from "@/components/ui/button";
 
 const nodeSize = {
   width: 100,
@@ -87,7 +88,8 @@ const FlowWrapper = () => {
           <Controls />
           <Background color="#aaa" gap={16} />
         </ReactFlow>
-        <button onClick={addTriNode}>Add Tri Node</button>
+
+        <Button onClick={addTriNode}>Add Tri Node</Button>
       </ReactFlowProvider>
     </div>
   );
