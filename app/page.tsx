@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import FlowWrapper from "@/components/FlowWrapper";
 import "tailwindcss/tailwind.css";
+import ContextTab from "@/components/contextTab";
 
 const Home = () => {
   return (
@@ -26,15 +27,15 @@ const Home = () => {
         </p>
       </div>
       <div className="flex justify-center items-center mb-20 w-full  max-w-screen-xl">
-        <div className="w-1/2 h-full m-4">
+        <div className="w-1/2 h-full m-2">
           <EditorMenu />
           <EditorWrapper />
         </div>
-        <div className="w-1/2 h-full m-4">
+        <div className="w-1/2 h-full m-2">
           <Tabs defaultValue="account" className="w-full h-full">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="garden">Garden</TabsTrigger>
-              <TabsTrigger value="ai-chat">Ai Chat</TabsTrigger>
+              <TabsTrigger value="context">Context</TabsTrigger>
             </TabsList>
             <TabsContent value="garden" className=" h-full">
               <Card className=" h-full">
@@ -46,21 +47,8 @@ const Home = () => {
                 </CardContent>
               </Card>
             </TabsContent>
-            <TabsContent value="ai-chat">
-              <Card className=" h-full">
-                <CardHeader>
-                  <CardTitle>Ai Chat</CardTitle>
-                  <CardDescription>
-                    Here is a group of Ai review.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  This is the content
-                </CardContent>
-                <CardFooter>
-                  <Button>chat n ow</Button>
-                </CardFooter>
-              </Card>
+            <TabsContent value="context">
+              <ContextTab />
             </TabsContent>
           </Tabs>
         </div>

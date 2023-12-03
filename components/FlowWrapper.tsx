@@ -16,6 +16,7 @@ import {
 } from "./initial-elements";
 import "reactflow/dist/style.css";
 import { space } from "postcss/lib/list";
+import { Button } from "@/components/ui/button";
 
 const nodeSize = {
   width: 300,
@@ -126,12 +127,12 @@ const FlowWrapper = () => {
           <Controls />
           <Background color="#aaa" gap={16} />
         </ReactFlow>
-        <button onClick={addTriNode}>Add Tri Node</button>
         <div>
           {cmdAndUPressed && <p>Cmd + U pressed!</p>}
           {cmdAndJPressed && <p>Cmd + J pressed!</p>}
           {cmdAndKPressed && <p>Cmd + K pressed!</p>}
         </div>
+        <Button onClick={addTriNode}>Add Tri Node</Button>
       </ReactFlowProvider>
     </div>
   );

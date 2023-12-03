@@ -3,6 +3,7 @@
 import { Editor } from "novel";
 import { useEffect } from "react";
 import { useGlobalState } from "@/lib/contexts/GlobalState";
+import axios from "axios";
 
 const EditorWrapper = () => {
   const {
@@ -12,6 +13,7 @@ const EditorWrapper = () => {
     refreshEditor,
     setRefreshEditor,
     initDoc,
+    callAutocomplete,
   } = useGlobalState();
 
   console.log("wrapper render content: ", initDoc);
@@ -56,21 +58,17 @@ const EditorWrapper = () => {
           content: editor?.storage.markdown.getMarkdown(),
         }));
       }}
-      onDebouncedUpdate={() => {
+      onDebouncedUpdate={async () => {
         console.log("calling debounced update");
 
-        if (doc.title === initDoc.title && doc.content === initDoc.content) {
-          console.log("onDebouncedUpdate - no change");
-
-          return;
-        }
+        await callAutocomplete();
         // call the /api/autocomplete
         // { content: '' }
-        startTransitionSaving(async () => {
-          console.log("starting save inside EditorWrapper: doc: ", doc);
+        // startTransitionSaving(async () => {
+        //   console.log("starting save inside EditorWrapper: doc: ", doc);
 
-          // await updateDocument(doc, supabase, session);
-        });
+        //   // await updateDocument(doc, supabase, session);
+        // });
       }}
     />
   );
