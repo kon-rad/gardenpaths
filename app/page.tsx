@@ -27,7 +27,7 @@ const Home = () => {
         </p>
       </div>
       <div className="flex justify-center items-center mb-20 w-full  max-w-screen-xl">
-        <div className="w-1/2 h-full m-2">
+        <div className="w-1/2 h-full m-2 h-[1200px]">
           <EditorMenu />
           <EditorWrapper />
         </div>
