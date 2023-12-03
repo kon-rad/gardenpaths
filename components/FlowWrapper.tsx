@@ -43,6 +43,7 @@ const onInit = (reactFlowInstance) =>
 const FlowWrapper = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [selectedNode, setSelectedNode] = useState(null);
   const fixedX = 200;
   const { paths, setPaths, doc, setDoc, setRefreshEditor } = useGlobalState();
 
@@ -52,6 +53,27 @@ const FlowWrapper = () => {
     []
   );
 
+  const cmdAndUPressed = useKeyPress(['Meta+u', 'Strg+u']);
+  const cmdAndJPressed = useKeyPress(['Meta+j', 'Strg+j']);
+  const cmdAndKPressed = useKeyPress(['Meta+k', 'Strg+k']);
+
+  React.useEffect(() => {
+    if (cmdAndUPressed) {
+      setSelectedNode(nodes[nodes.length - 3].id);
+    }
+  }, [cmdAndUPressed, nodes]);
+
+  React.useEffect(() => {
+    if (cmdAndJPressed) {
+      setSelectedNode(nodes[nodes.length - 2].id);
+    }
+  }, [cmdAndJPressed, nodes]);
+
+  React.useEffect(() => {
+    if (cmdAndKPressed) {
+      setSelectedNode(nodes[nodes.length - 1].id);
+    }
+  }, [cmdAndKPressed, nodes]);
   useEffect(() => {
     console.log("paths: ", paths);
     if (paths.length > 0) {
@@ -82,9 +104,10 @@ const FlowWrapper = () => {
     }
 
     // Get the center node from the previous layer
-    const prevCenterNode = nodes[nodes.length - 2];
+    // const prevCenterNode = nodes[nodes.length - 2];
 
-    return prevCenterNode.id;
+    // return prevCenterNode.id;
+    return selectedNode;
   };
 
   const addNewNodes = (newPaths: string[]) => {
@@ -127,7 +150,7 @@ const FlowWrapper = () => {
     const prevCenterNodeId = getPrevCenterNodeId(); // Function to get the ID of the center node from the previous layer
 
     for (let i = 0; i < 3; i++) {
-      const y = latestY + 100;
+      const y = latestY + 200;
       const x = 100 + i * 400; // Add an offset to the X coordinate based on the index
       const newNodeId = (nodes.length + i + 1).toString();
       const newNode = {
@@ -170,7 +193,11 @@ const FlowWrapper = () => {
     <div className="w-[580px] h-[560px]">
       <ReactFlowProvider initialNodes={nodes} initialEdges={edges}>
         <ReactFlow
-          nodes={nodes}
+          // nodes={nodes}
+          nodes={nodes.map(node => ({
+            ...node,
+            style: node.id === selectedNode ? { ...node.style, background: 'green' } : node.style,
+          }))}
           edges={edgesWithUpdatedTypes}
           onNodeClick={onNodeClick}
           onNodesChange={onNodesChange}
@@ -185,12 +212,12 @@ const FlowWrapper = () => {
           <Controls />
           <Background color="#aaa" gap={16} />
         </ReactFlow>
+        <button onClick={addTriNode}>Add Tri Node</button>
         <div>
-          {cmdAndUPressed && <p>Cmd + U pressed!</p>}
-          {cmdAndJPressed && <p>Cmd + J pressed!</p>}
-          {cmdAndKPressed && <p>Cmd + K pressed!</p>}
+          {cmdAndUPressed && <p>{nodes[nodes.length - 3].id}</p>}
+          {cmdAndJPressed && <p>{nodes[nodes.length - 2].id}</p>}
+          {cmdAndKPressed && <p>{nodes[nodes.length - 1].id}</p>}
         </div>
-        <Button onClick={addTriNode}>Add Tri Node</Button>
       </ReactFlowProvider>
     </div>
   );
