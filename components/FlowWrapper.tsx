@@ -1,7 +1,14 @@
 "use client";
 
-import { Edge, Node, Position, ReactFlowProvider, useKeyPress, useNodeId } from "reactflow";
-import React, { useCallback, useState } from "react";
+import {
+  Edge,
+  Node,
+  Position,
+  ReactFlowProvider,
+  useKeyPress,
+  useNodeId,
+} from "reactflow";
+import React, { useCallback, useState, useEffect } from "react";
 import ReactFlow, {
   addEdge,
   MiniMap,
@@ -16,6 +23,8 @@ import {
 } from "./initial-elements";
 import "reactflow/dist/style.css";
 import { space } from "postcss/lib/list";
+import { Button } from "@/components/ui/button";
+import { useGlobalState } from "@/lib/contexts/GlobalState";
 
 const nodeSize = {
   width: 300,
@@ -31,12 +40,12 @@ const minimapStyle = {
 const onInit = (reactFlowInstance) =>
   console.log("flow loaded:", reactFlowInstance);
 
-
 const FlowWrapper = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedNode, setSelectedNode] = useState(null);
   const fixedX = 200;
+  const { paths, setPaths, doc, setDoc, setRefreshEditor } = useGlobalState();
 
   const [latestY, setLatestY] = useState(0);
   const onConnect = useCallback(
@@ -65,7 +74,16 @@ const FlowWrapper = () => {
       setSelectedNode(nodes[nodes.length - 1].id);
     }
   }, [cmdAndKPressed, nodes]);
+  useEffect(() => {
+    console.log("paths: ", paths);
+    if (paths.length > 0) {
+      addNewNodes(paths[paths.length - 1]);
+    }
+  }, [paths]);
 
+  const cmdAndUPressed = useKeyPress(["Meta+u", "Strg+u"]);
+  const cmdAndJPressed = useKeyPress(["Meta+j", "Strg+j"]);
+  const cmdAndKPressed = useKeyPress(["Meta+k", "Strg+k"]);
 
   // we are using a bit of a shortcut here to adjust the edge type
   // this could also be done with a custom edge for example
@@ -92,6 +110,41 @@ const FlowWrapper = () => {
     return selectedNode;
   };
 
+  const addNewNodes = (newPaths: string[]) => {
+    console.log("addNewNodes: ", newPaths);
+
+    if (!newPaths || newPaths.length === 0) return;
+    const xOffset = 100; // Define an offset for the X coordinate
+    const prevCenterNodeId = getPrevCenterNodeId(); // Function to get the ID of the center node from the previous layer
+
+    for (let i = 0; i < newPaths.length; i++) {
+      const y = latestY + 100;
+      const x = 100 + i * 400; // Add an offset to the X coordinate based on the index
+      const newNodeId = (nodes.length + i + 1).toString();
+      const newNode = {
+        id: newNodeId,
+        data: { label: `${newPaths[i]}` },
+        position: { x, y },
+        style: { width: nodeSize.width, height: nodeSize.height },
+        // Add any other properties you need for the node
+      };
+      setNodes((prevNodes) => [...prevNodes, newNode]);
+
+      if (nodes.length > 0) {
+        // Add an edge from the new node to the center node from the previous layer
+        const newEdge = {
+          id: "e" + newNodeId + "-" + prevCenterNodeId,
+          source: prevCenterNodeId,
+          target: newNodeId,
+          // sourceHandle: 'bottom', // The edge starts from the bottom of the source node
+          // targetHandle: 'top', // The edge ends at the top of the target node
+          // Add any other properties you need for the edge
+        };
+        setEdges((prevEdges) => [...prevEdges, newEdge]);
+      }
+      setLatestY(y); // Update the latest Y coordinate
+    }
+  };
   const addTriNode = () => {
     const xOffset = 100; // Define an offset for the X coordinate
     const prevCenterNodeId = getPrevCenterNodeId(); // Function to get the ID of the center node from the previous layer
@@ -112,7 +165,7 @@ const FlowWrapper = () => {
       if (nodes.length > 0) {
         // Add an edge from the new node to the center node from the previous layer
         const newEdge = {
-          id: 'e' + newNodeId + '-' + prevCenterNodeId,
+          id: "e" + newNodeId + "-" + prevCenterNodeId,
           source: prevCenterNodeId,
           target: newNodeId,
           // sourceHandle: 'bottom', // The edge starts from the bottom of the source node
@@ -123,9 +176,18 @@ const FlowWrapper = () => {
       }
       setLatestY(y); // Update the latest Y coordinate
     }
-
   };
 
+  // Define the function to handle node click events
+  const onNodeClick: OnNodeClickFunc = (event, node) => {
+    console.log("Clicked node:", node.data.label);
+    setDoc({
+      content: doc.content + node.data.label,
+    });
+    console.log("Clicked event:", event);
+    setRefreshEditor(`${Math.random() * 10000000}`);
+    // You can handle the click event here, such as updating state or triggering actions
+  };
 
   return (
     <div className="w-[580px] h-[560px]">
@@ -137,6 +199,7 @@ const FlowWrapper = () => {
             style: node.id === selectedNode ? { ...node.style, background: 'green' } : node.style,
           }))}
           edges={edgesWithUpdatedTypes}
+          onNodeClick={onNodeClick}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
