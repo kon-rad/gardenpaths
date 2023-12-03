@@ -1,6 +1,6 @@
 "use client";
 
-import { Edge, Node, Position, ReactFlowProvider } from "reactflow";
+import { Edge, Node, Position, ReactFlowProvider, useKeyPress, useNodeId } from "reactflow";
 import React, { useCallback, useState } from "react";
 import ReactFlow, {
   addEdge,
@@ -15,11 +15,12 @@ import {
   edges as initialEdges,
 } from "./initial-elements";
 import "reactflow/dist/style.css";
+import { space } from "postcss/lib/list";
 import { Button } from "@/components/ui/button";
 
 const nodeSize = {
-  width: 100,
-  height: 40,
+  width: 300,
+  height: 80,
 };
 
 const nodeTypes = {};
@@ -31,6 +32,7 @@ const minimapStyle = {
 const onInit = (reactFlowInstance) =>
   console.log("flow loaded:", reactFlowInstance);
 
+
 const FlowWrapper = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -41,6 +43,12 @@ const FlowWrapper = () => {
     (params) => setEdges((eds) => addEdge(params, eds)),
     []
   );
+
+  const cmdAndUPressed = useKeyPress(['Meta+u', 'Strg+u']);
+  const cmdAndJPressed = useKeyPress(['Meta+j', 'Strg+j']);
+  const cmdAndKPressed = useKeyPress(['Meta+k', 'Strg+k']);
+
+
 
   // we are using a bit of a shortcut here to adjust the edge type
   // this could also be done with a custom edge for example
@@ -54,22 +62,53 @@ const FlowWrapper = () => {
     return edge;
   });
 
+  const getPrevCenterNodeId = () => {
+    if (nodes.length < 2) {
+      // If there are less than 2 nodes, return null or a default value
+      return null;
+    }
+
+    // Get the center node from the previous layer
+    const prevCenterNode = nodes[nodes.length - 2];
+
+    return prevCenterNode.id;
+  };
+
   const addTriNode = () => {
     const xOffset = 100; // Define an offset for the X coordinate
+    const prevCenterNodeId = getPrevCenterNodeId(); // Function to get the ID of the center node from the previous layer
 
     for (let i = 0; i < 3; i++) {
       const y = latestY + 100;
-      const x = fixedX + i * xOffset; // Add an offset to the X coordinate based on the index
+      const x = 100 + i * 400; // Add an offset to the X coordinate based on the index
+      const newNodeId = (nodes.length + i + 1).toString();
       const newNode = {
-        id: (nodes.length + i + 1).toString(),
+        id: newNodeId,
         data: { label: `Node ${nodes.length + i + 1}` },
         position: { x, y },
+        style: { width: nodeSize.width, height: nodeSize.height },
         // Add any other properties you need for the node
       };
       setNodes((prevNodes) => [...prevNodes, newNode]);
+
+      if (nodes.length > 0) {
+        // Add an edge from the new node to the center node from the previous layer
+        const newEdge = {
+          id: 'e' + newNodeId + '-' + prevCenterNodeId,
+          source: prevCenterNodeId,
+          target: newNodeId,
+          // sourceHandle: 'bottom', // The edge starts from the bottom of the source node
+          // targetHandle: 'top', // The edge ends at the top of the target node
+          // Add any other properties you need for the edge
+        };
+        setEdges((prevEdges) => [...prevEdges, newEdge]);
+      }
       setLatestY(y); // Update the latest Y coordinate
     }
+
   };
+
+
   return (
     <div className="w-[580px] h-[560px]">
       <ReactFlowProvider initialNodes={nodes} initialEdges={edges}>
@@ -88,7 +127,11 @@ const FlowWrapper = () => {
           <Controls />
           <Background color="#aaa" gap={16} />
         </ReactFlow>
-
+        <div>
+          {cmdAndUPressed && <p>Cmd + U pressed!</p>}
+          {cmdAndJPressed && <p>Cmd + J pressed!</p>}
+          {cmdAndKPressed && <p>Cmd + K pressed!</p>}
+        </div>
         <Button onClick={addTriNode}>Add Tri Node</Button>
       </ReactFlowProvider>
     </div>
