@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import FlowWrapper from "@/components/FlowWrapper";
 import "tailwindcss/tailwind.css";
+import ContextTab from "@/components/contextTab";
 
 const Home = () => {
   return (
@@ -32,8 +33,9 @@ const Home = () => {
         </div>
         <div className="w-1/2 h-full m-2">
           <Tabs defaultValue="account" className="w-full h-full">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="garden">Garden</TabsTrigger>
+              <TabsTrigger value="context">Context</TabsTrigger>
               <TabsTrigger value="ai-chat">Ai Chat</TabsTrigger>
             </TabsList>
             <TabsContent value="garden" className=" h-full">
@@ -45,6 +47,9 @@ const Home = () => {
                   <FlowWrapper />
                 </CardContent>
               </Card>
+            </TabsContent>
+            <TabsContent value="context">
+              <ContextTab />
             </TabsContent>
             <TabsContent value="ai-chat">
               <Card className=" h-full">

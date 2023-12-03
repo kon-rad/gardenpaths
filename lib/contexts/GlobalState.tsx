@@ -7,6 +7,7 @@ import React, {
   ReactNode,
   useTransition,
 } from "react";
+import axios from "axios";
 
 type GlobalState = {
   // Define your global state properties here
@@ -34,9 +35,21 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = ({
     `${Math.random() * 10000000}`
   );
   const [doc, setDoc] = useState<any>({});
+  const [style, setStyle] = useState<string>("");
+  const [context, setContext] = useState<string>("");
   let [isPendingSaving, startTransitionSaving] = useTransition();
   const [initDoc, setInitDoc] = useState<any>({});
 
+  const callAutocomplete = async () => {
+    console.log("callAutocomplete called");
+
+    const resp = await axios.post("/api/autocomplete", {
+      context,
+      style,
+      content: doc,
+    });
+    console.log("resp: ", resp);
+  };
   return (
     <GlobalContext.Provider
       value={
@@ -48,6 +61,11 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = ({
           refreshEditor,
           setRefreshEditor,
           initDoc,
+          context,
+          setContext,
+          style,
+          setStyle,
+          callAutocomplete,
         } as any
       }
     >
