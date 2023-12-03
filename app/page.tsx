@@ -36,7 +36,6 @@ const Home = () => {
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="garden">Garden</TabsTrigger>
               <TabsTrigger value="context">Context</TabsTrigger>
-              <TabsTrigger value="ai-chat">Ai Chat</TabsTrigger>
             </TabsList>
             <TabsContent value="garden" className=" h-full">
               <Card className=" h-full">
@@ -50,22 +49,6 @@ const Home = () => {
             </TabsContent>
             <TabsContent value="context">
               <ContextTab />
-            </TabsContent>
-            <TabsContent value="ai-chat">
-              <Card className=" h-full">
-                <CardHeader>
-                  <CardTitle>Ai Chat</CardTitle>
-                  <CardDescription>
-                    Here is a group of Ai review.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  This is the content
-                </CardContent>
-                <CardFooter>
-                  <Button>chat n ow</Button>
-                </CardFooter>
-              </Card>
             </TabsContent>
           </Tabs>
         </div>
