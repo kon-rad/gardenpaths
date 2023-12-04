@@ -137,6 +137,8 @@ const FlowWrapper = () => {
         id: newNodeId,
         data: { label: `${newPaths[i]}` },
         position: { x, y },
+        sourcePosition: 'right',
+        targetPosition: 'left',
         style: {
           width: nodeSize.width,
           height: nodeSize.height,
@@ -173,37 +175,15 @@ const FlowWrapper = () => {
       setIsSelected(false);
     }
   };
-  const addTriNode = () => {
-    const xOffset = 100; // Define an offset for the X coordinate
-    const prevCenterNodeId = getPrevCenterNodeId(); // Function to get the ID of the center node from the previous layer
 
-    for (let i = 0; i < 3; i++) {
-      const y = latestX + 200;
-      const x = 100 + i * 400; // Add an offset to the X coordinate based on the index
-      const newNodeId = (nodes.length + i + 1).toString();
-      const newNode = {
-        id: newNodeId,
-        data: { label: `Node ${nodes.length + i + 1}` },
-        position: { x, y },
-        style: { width: nodeSize.width, height: nodeSize.height },
-        // Add any other properties you need for the node
-      };
-      setNodes((prevNodes) => [...prevNodes, newNode]);
-
-      if (nodes.length > 0) {
-        // Add an edge from the new node to the center node from the previous layer
-        const newEdge = {
-          id: "e" + newNodeId + "-" + prevCenterNodeId,
-          source: prevCenterNodeId,
-          target: newNodeId,
-          // sourceHandle: 'bottom', // The edge starts from the bottom of the source node
-          // targetHandle: 'top', // The edge ends at the top of the target node
-          // Add any other properties you need for the edge
-        };
-        setEdges((prevEdges) => [...prevEdges, newEdge]);
-      }
-      setLatestX(y); // Update the latest Y coordinate
-    }
+  const replaceLastLayer = (newLayer: string[]) => {
+    setNodes((prevNodes) => {
+      const newNodes = [...prevNodes];
+      newLayer.forEach((strLayer: string, i: number) => {
+        newNodes[newNodes.length - 3 + i].data.label = strLayer;
+      });
+      return [...newNodes];
+    });
   };
 
   // Define the function to handle node click events
@@ -256,7 +236,6 @@ const FlowWrapper = () => {
           <Controls />
           <Background color="#aaa" gap={16} />
         </ReactFlow>
-        <button onClick={addTriNode}>Add Tri Node</button>
         <div>
           {cmdAndUPressed && <p>{nodes[nodes.length - 3].id}</p>}
           {cmdAndJPressed && <p>{nodes[nodes.length - 2].id}</p>}
