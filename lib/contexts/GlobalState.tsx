@@ -35,11 +35,15 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = ({
     `${Math.random() * 10000000}`
   );
   const [doc, setDoc] = useState<any>({});
-  const [paths, setPaths] = useState<any>([]);
+  const [activeLayer, setActiveLayer] = useState<number>(0);
+  const [paths, setPaths] = useState<string[][]>([]);
+  const [selectedNodes, setSelectedNodes] = useState<number[] | undefined>();
   const [style, setStyle] = useState<string>("");
   const [context, setContext] = useState<string>("");
   let [isPendingSaving, startTransitionSaving] = useTransition();
   const [initDoc, setInitDoc] = useState<any>({});
+  // [0, 1, 2]
+  // [[], [], ['a', 'b', 'c']]
 
   const callAutocomplete = async () => {
     console.log("callAutocomplete called");
@@ -93,6 +97,10 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = ({
           callAutocomplete,
           paths,
           setPaths,
+          activeLayer,
+          setActiveLayer,
+          selectedNodes,
+          setSelectedNodes,
         } as any
       }
     >
