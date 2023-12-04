@@ -121,12 +121,6 @@ const FlowWrapper = () => {
 
   const addNewNodes = (newPaths: string[]) => {
     console.log("addNewNodes: ", newPaths);
-    debugger;
-    if (!isSelected) {
-      replaceLastLayer(newPaths);
-      setIsSelected(false);
-      return;
-    }
 
     if (!newPaths || newPaths.length === 0) return;
     const xOffset = 100; // Define an offset for the X coordinate
@@ -135,7 +129,8 @@ const FlowWrapper = () => {
     // use active layer to replace or add on to nodes
     for (let i = 0; i < newPaths.length; i++) {
       // set correct coordinates
-      const x = latestX + 500;
+      const currDataLabel = newPaths[i];
+      const x = latestX + (!isSelected ? 0 : 500);
       const y = 100 + i * 100; // Add an offset to the X coordinate based on the index
       const newNodeId = (nodes.length + i + 1).toString();
       const newNode = {
@@ -151,7 +146,15 @@ const FlowWrapper = () => {
         },
         // Add any other properties you need for the node
       };
-      setNodes((prevNodes) => [...prevNodes, newNode]);
+      setNodes((prevNodes: any) => {
+        if (isSelected) {
+          return [...prevNodes, newNode];
+        }
+        const currNodeIndex = prevNodes.length - 3 + i;
+        const currNodes = [...prevNodes];
+        currNodes[currNodeIndex] = newNode;
+        return currNodes;
+      });
 
       if (nodes.length > 0) {
         // Add an edge from the new node to the center node from the previous layer
@@ -169,15 +172,6 @@ const FlowWrapper = () => {
       setLatestX(x); // Update the latest Y coordinate
       setIsSelected(false);
     }
-  };
-  const replaceLastLayer = (newLayer: string[]) => {
-    setNodes((prevNodes) => {
-      const newNodes = [...prevNodes];
-      newLayer.forEach((strLayer: string, i: number) => {
-        newNodes[newNodes.length - 3 + i].data.label = strLayer;
-      });
-      return [...newNodes];
-    });
   };
   const addTriNode = () => {
     const xOffset = 100; // Define an offset for the X coordinate
