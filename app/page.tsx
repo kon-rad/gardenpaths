@@ -26,7 +26,7 @@ const Home = () => {
           Tool for non-linear exploration of thoughts for story writing.
         </p>
       </div>
-      <div className="flex justify-center items-center mb-20 w-full  max-w-screen-xl">
+      <div className="flex justify-center items-center mb-20 w-full px-6">
         <div className="w-1/2 h-full m-2 h-[1200px]">
           <EditorMenu />
           <EditorWrapper />
@@ -39,9 +39,6 @@ const Home = () => {
             </TabsList>
             <TabsContent value="garden" className=" h-full">
               <Card className=" h-full">
-                <CardHeader>
-                  <CardTitle>Garden</CardTitle>
-                </CardHeader>
                 <CardContent className="space-y-2">
                   <FlowWrapper />
                 </CardContent>
