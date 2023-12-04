@@ -58,6 +58,7 @@ const EditorWrapper = () => {
           content: editor?.storage.markdown.getMarkdown(),
         }));
       }}
+      // debounceDuration
       onDebouncedUpdate={async () => {
         console.log("calling debounced update");
 

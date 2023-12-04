@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Edge,
-  Node,
-  Position,
-  ReactFlowProvider,
-  useKeyPress,
-  useNodeId,
-} from "reactflow";
+import { useKeyPress, useNodeId } from "reactflow";
 import React, { useCallback, useState, useEffect } from "react";
 import ReactFlow, {
   addEdge,
@@ -16,6 +9,7 @@ import ReactFlow, {
   Background,
   useNodesState,
   useEdgesState,
+  useReactFlow,
 } from "reactflow";
 import {
   nodes as initialNodes,
@@ -37,7 +31,7 @@ const minimapStyle = {
   height: 120,
 };
 
-const onInit = (reactFlowInstance) =>
+const onInit = (reactFlowInstance: any) =>
   console.log("flow loaded:", reactFlowInstance);
 
 const FlowWrapper = () => {
@@ -56,6 +50,8 @@ const FlowWrapper = () => {
     setSelectedNodes,
     setActiveLayer,
   } = useGlobalState();
+
+  const reactFlow = useReactFlow();
 
   const [latestX, setLatestX] = useState(0);
   const onConnect = useCallback(
@@ -93,6 +89,9 @@ const FlowWrapper = () => {
       addNewNodes(paths[paths.length - 1]);
     }
   }, [paths]);
+  // useEffect(() => {
+  //   recenterView();
+  // }, [nodes]);
 
   // we are using a bit of a shortcut here to adjust the edge type
   // this could also be done with a custom edge for example
@@ -129,24 +128,22 @@ const FlowWrapper = () => {
     // use active layer to replace or add on to nodes
     for (let i = 0; i < newPaths.length; i++) {
       // set correct coordinates
-      const currDataLabel = newPaths[i];
       const x = latestX + (!isSelected ? 0 : 500);
       const y = 100 + i * 100; // Add an offset to the X coordinate based on the index
-      const newNodeId = (nodes.length + i + 1).toString();
+      const newNodeId = (nodes.length + i + (!isSelected ? 0 : 1)).toString();
       const newNode = {
         id: newNodeId,
         data: { label: `${newPaths[i]}` },
         position: { x, y },
-        sourcePosition: 'right',
-        targetPosition: 'left',
+        sourcePosition: "right",
+        targetPosition: "left",
         style: {
           width: nodeSize.width,
           height: nodeSize.height,
           radius: "8px",
-          // overflow: "wrap",
           fontSize: "14px",
+          // backgroundColor: selectedNodex[i] ? 'green' : 'transparent'
         },
-        // Add any other properties you need for the node
       };
       setNodes((prevNodes: any) => {
         if (isSelected) {
@@ -164,26 +161,14 @@ const FlowWrapper = () => {
           id: "e" + newNodeId + "-" + prevCenterNodeId,
           source: prevCenterNodeId,
           target: newNodeId,
-          // sourceHandle: 'bottom', // The edge starts from the bottom of the source node
-          // targetHandle: 'top', // The edge ends at the top of the target node
-          // Add any other properties you need for the edge
         };
         //
         setEdges((prevEdges) => [...prevEdges, newEdge]);
       }
       setLatestX(x); // Update the latest Y coordinate
       setIsSelected(false);
+      recenterView();
     }
-  };
-
-  const replaceLastLayer = (newLayer: string[]) => {
-    setNodes((prevNodes) => {
-      const newNodes = [...prevNodes];
-      newLayer.forEach((strLayer: string, i: number) => {
-        newNodes[newNodes.length - 3 + i].data.label = strLayer;
-      });
-      return [...newNodes];
-    });
   };
 
   // Define the function to handle node click events
@@ -210,39 +195,39 @@ const FlowWrapper = () => {
   };
   console.log("render nodes: ", nodes);
 
+  const recenterView = () => {
+    if (nodes.length > 0) {
+      const centerNode = nodes[nodes.length - 2];
+      const x = centerNode.position.x;
+      const y = centerNode.position.y;
+      reactFlow.setCenter(x, y, { duration: 500 });
+      reactFlow.zoomOut(1);
+    }
+  };
+
   return (
-    <div className="w-[580px] h-[560px]">
-      <ReactFlowProvider initialNodes={nodes} initialEdges={edges}>
-        <ReactFlow
-          // nodes={nodes}
-          nodes={nodes.map((node) => ({
-            ...node,
-            style:
-              node.id === selectedNode
-                ? { ...node.style, background: "green" }
-                : node.style,
-          }))}
-          edges={edgesWithUpdatedTypes}
-          onNodeClick={onNodeClick}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onInit={onInit}
-          fitView
-          attributionPosition="top-right"
-          nodeTypes={nodeTypes}
-        >
-          <MiniMap style={minimapStyle} zoomable pannable />
-          <Controls />
-          <Background color="#aaa" gap={16} />
-        </ReactFlow>
-        <div>
-          {cmdAndUPressed && <p>{nodes[nodes.length - 3].id}</p>}
-          {cmdAndJPressed && <p>{nodes[nodes.length - 2].id}</p>}
-          {cmdAndKPressed && <p>{nodes[nodes.length - 1].id}</p>}
-        </div>
-      </ReactFlowProvider>
-    </div>
+    <ReactFlow
+      nodes={nodes.map((node) => ({
+        ...node,
+        style:
+          node.id === selectedNode
+            ? { ...node.style, background: "green" }
+            : node.style,
+      }))}
+      edges={edgesWithUpdatedTypes}
+      onNodeClick={onNodeClick}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      onConnect={onConnect}
+      onInit={onInit}
+      fitView
+      attributionPosition="top-right"
+      nodeTypes={nodeTypes}
+    >
+      <MiniMap style={minimapStyle} zoomable pannable />
+      <Controls />
+      <Background color="#aaa" gap={16} />
+    </ReactFlow>
   );
 };
 

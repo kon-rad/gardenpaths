@@ -16,7 +16,11 @@ import {
 import FlowWrapper from "@/components/FlowWrapper";
 import "tailwindcss/tailwind.css";
 import ContextTab from "@/components/contextTab";
+import { ReactFlowProvider } from "reactflow";
 
+export const nodes = [];
+
+export const edges = [];
 const Home = () => {
   return (
     <div className="flex flex-col h-screen items-center mb-10">
@@ -39,8 +43,10 @@ const Home = () => {
             </TabsList>
             <TabsContent value="garden" className=" h-full">
               <Card className=" h-full">
-                <CardContent className="space-y-2">
-                  <FlowWrapper />
+                <CardContent className="space-y-2 w-full h-full">
+                  <ReactFlowProvider initialNodes={nodes} initialEdges={edges}>
+                    <FlowWrapper />
+                  </ReactFlowProvider>
                 </CardContent>
               </Card>
             </TabsContent>
