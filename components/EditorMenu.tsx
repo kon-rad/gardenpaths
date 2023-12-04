@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 
 const EditorMenu = () => {
   return (
-    <div className="flex flex-row w-full my-4">
+    <div className="flex flex-row w-full mb-2">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline">Export</Button>
